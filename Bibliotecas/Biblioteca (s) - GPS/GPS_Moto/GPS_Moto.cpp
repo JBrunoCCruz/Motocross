@@ -39,7 +39,7 @@
 
 #include "GPS_Moto.h"
 
-int parse (char *cmd, int n, dataGPS *data) {
+int parse (char *cmd, dataGPS *data) {
     if (strncmp (cmd, "GNRMC", 5) == 0) {
         dataCatch (cmd, data);       
 		return 1;
@@ -50,7 +50,7 @@ int parse (char *cmd, int n, dataGPS *data) {
 
 // Fun��o para reiniciar as variaveis numericas
 void reset (dataGPS *data) {
-    data->time = 0;
+    data->timer = 0;
     data->latitude = 0;
     data->longitude = 0;
     data->velocidade = 0;
@@ -91,11 +91,11 @@ int getTime (char *input, int pivot, dataGPS *data) {
         // Pega os valores diferentes de '.'
         if ( (double)input[pivot + i] != '.') {
             j = potencia (i);
-            data->time += ( (double)input[pivot + i] - '0')* (100000/j);
+            data->timer += ( (double)input[pivot + i] - '0')* (100000/j);
         }
     }
      //Retorna a posi��o do ultimo dado pego
-     data->time -= 30000.0;
+     data->timer -= 30000.0;
     return pivot + i - 1;
 }
 
@@ -209,11 +209,11 @@ int getCourse(char *input, int pivot, dataGPS *data) {
 }
 
 // Fun��o para pegar a data do gps
-int getDate (char *input, int pivot, dataGPS *data) {
+int getDateh (char *input, int pivot, dataGPS *data) {
     int i;
     // Executa at� encontrar uma virgula
     for(i = 0; (int) input[pivot + i] != ',' ; i++) { //i < 6 
-        data->date[i] = input[pivot + i];  
+        data->dateh[i] = input[pivot + i];  
     }
    
     //Retorna a posi��o do ultimo dado pego
@@ -309,8 +309,8 @@ void dataCatch (char  *mensagem, dataGPS *data) {
                 i = getCourse (mensagem, i, data);
                 break;
             case 9:
-                //fun��o getDate
-                i = getDate (mensagem, i, data);
+                //fun��o getDateh
+                i = getDateh (mensagem, i, data);
                 break;
             case 10:
                 //fun��o getMagnetcVariationValue

@@ -1,4 +1,4 @@
-#include "SoftwareSerial.h"
+#include <SoftwareSerial.h>
 #include "GPS_Moto.h"
 #include "string.h"
 
@@ -10,7 +10,7 @@ void adquirirDadosDoGPS (void);
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin (9600);
+  Serial.begin (115200);
   gpsSerial.begin (9600);
 }
 
@@ -21,32 +21,29 @@ void loop() {
 
 void adquirirDadosDoGPS (void) {
     char c;
-    char cDataBuffer[250], *ponteiroProBuffer;
+    char cDataBuffer[100], *ponteiroProBuffer;
     ponteiroProBuffer = cDataBuffer;
-    int verificacao = 0;
+    int verificacao = 0, i;
     while (true) {
         if (gpsSerial.available ()) {
             c = gpsSerial.read();
             if (c == '$') { // Espera um $ (Identifica o inicio de um mensagem)
-                for (int i = 0; i < sizeof (cDataBuffer); i++) {
-                    c = gpsSerial.read();
-                    if (c == '\r' ) {
-                        verificacao = parse (ponteiroProBuffer, i, &dadosDoGPS);
-                        i = sizeof (cDataBuffer);                        
-                    } else {
-                        cDataBuffer[i] = c;
-                        if (i < 5) {
-                          Serial.print (c);
-                        }
-                    }                
+                for (i = 0; i < sizeof (cDataBuffer); ) {
+                    if (gpsSerial.available ()) {
+                        c = gpsSerial.read();
+                        if (c == '\r' ) {
+                            verificacao = parse (ponteiroProBuffer, &dadosDoGPS);                            
+                            i = sizeof (cDataBuffer);                                                    
+                        } else {
+                            cDataBuffer[i++] = c;                        
+                        }                        
+                    }                                   
                 }
-            } 
+            }                      
+            Serial.print (dadosDoGPS.protocol);
+            Serial.println ();
+            verificacao = 0;
         }
-        Serial.println ();
-        Serial.println (dadosDoGPS.latitude);
-        Serial.println (dadosDoGPS.longitude);
-        Serial.println ();
-        delay (500);
     }
     return;
 }

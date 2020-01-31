@@ -18,6 +18,6 @@ void loop() {
   // Verifica se é verdade que há algum dado sendo enviado pelo GPS na serial
   if (gpsSerial.available ()) {
     // Mostrado o dado lido da serial
-    Serial.print (gpsSerial.read ());
+    Serial.write (gpsSerial.read ());
   }
 }

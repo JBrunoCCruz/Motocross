@@ -25,7 +25,7 @@
  *              https://os.mbed.com/users/edodm85/notebook/gps-u-blox-neo-6m/
  *
  * @var protocol                      protocolo (GPGGA, GPGSA, GPGLL, GPRMC)
- * @var time                          tempo UTC (Fuso horário de referência (-3° em relação ao Brasil))  
+ * @var timer                          tempo UTC (Fuso horário de referência (-3° em relação ao Brasil))  
  * @var valid                         validade dos dados fornecidos pelo GPS (Semelhante ao CheckSum)
  * @var latitude                      latitude
  * @var getDirection1                 direção da latitude (Norte ou Sul)
@@ -42,7 +42,7 @@
  */
 typedef struct {
     char protocol[8];
-    double time;
+    double timer;
     char valid;
     double latitude;
     char direction1;
@@ -50,7 +50,7 @@ typedef struct {
     char direction2;
     double velocidade;
     double course;
-    char date[7];
+    char dateh[7];
     double magnetcVariationValue;
     char magnetcVariationIndicator;
     char mode;
@@ -78,7 +78,7 @@ typedef struct {
  *                              estrutura apontada pelo ponteiro data.
  *----------------------------------------------------------------------------------------------------------------------
  */
-int parse (char *cmd, int n, dataGPS *data);
+int parse (char *cmd, dataGPS *data);
 
 /**
 *----------------------------------------------------------------------------------------------------------------------
@@ -258,7 +258,7 @@ int getCourse (char input, int pivot, dataGPS *data);
 *                              estrutura apontada pelo ponteiro data.
 *----------------------------------------------------------------------------------------------------------------------
 */
-int getDate (char input, int pivot, dataGPS *data);
+int getDateh (char input, int pivot, dataGPS *data);
 
 /**
 *----------------------------------------------------------------------------------------------------------------------
