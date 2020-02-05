@@ -5,7 +5,7 @@ BluetoothSerial SerialBT;
 void setup() {
   Serial.begin (115200);
   SerialBT.begin ("ESP32_LIT"); //Bluetooth device name
-  Serial.println ("Dispositivo iniciado! Pronto para parear.");
+  Serial.println ("Dispositivo iniciado! Pronto para parear!");
 }
 
 void loop() {
