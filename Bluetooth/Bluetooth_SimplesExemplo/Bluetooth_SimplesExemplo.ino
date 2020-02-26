@@ -2,8 +2,8 @@
 
 BluetoothSerial SerialBT;
 
-int i = 0, cont = 1;
-char lido[5];
+int i = 0;
+char lido;
 
 void setup() {
   Serial.begin (115200);
@@ -18,16 +18,17 @@ void loop() {
   }
   
   if (SerialBT.available()) {
-    lido[0] = SerialBT.read ();
-    while (lido[0] != '#') {
-      lido[0] = SerialBT.read ();
+    lido = SerialBT.read ();
+    if (lido == '-' && i > 0) {
+      Serial.print ("Diminuir - ");
+      i--;  
+    } else if (lido == '+' && i < 10) {
+      Serial.print ("Aumentar - ");
+      i++;
     }
-    do {
-      lido[cont] = SerialBT.read ();
-    } while (lido[cont++] != '#');
-      
+    Serial.print ("Volume: ");
+    Serial.println (i);
   }
-  
   
   delay(20);
 }
