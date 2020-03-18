@@ -8,14 +8,6 @@ EventQueue q;
 // the event dispatcher
 EventDispatcher disp(&q);
 
-// use this analog channel
-#define AN_CHAN 0
-
-// generate an event when the analog
-// channel value changes this much
-// increase value for noisy sources
-#define AN_DELTA 5
-
 // let's suppose we have three pushbuttons
 // A, B and C connected to digital pins 5, 3, 4
 #define NUM_KEYS 3
@@ -23,7 +15,7 @@ EventDispatcher disp(&q);
 #define KEY_B 2
 #define KEY_C 3
 // int kb_pins[NUM_KEYS] = { 5, 3, 4 };
-int kb_pins[NUM_KEYS] = { 5, 2, 4 };
+int kb_pins[NUM_KEYS] = { 5, 15, 4 };
 int kb_keys[NUM_KEYS] = { KEY_A, KEY_B, KEY_C };
 int kb_on[NUM_KEYS] = { 0, 0, 0 };
 int kb_off[NUM_KEYS] = { 0, 0, 0 };
@@ -36,20 +28,11 @@ int kb_prev_state[NUM_KEYS] = { 0, 0, 0 };
 // #define LED_PIN 13
 #define LED_PIN 23
 
-
 // time event handler
 void timeHandler(int event, int param) {
    Serial.print("Time elapsed: ");
    Serial.println(millis() / 1000);
 }
-
-
-// analog event handler
-void analogHandler(int event, int param) {
-   Serial.print("Analog value: ");
-   Serial.println(param);
-}
-
 
 // keyboard event handler
 void kbHandler(int event, int param) {
@@ -97,21 +80,6 @@ void timeManager() {
    if (currMillis - prevMillis >= 1000) {
        prevMillis = currMillis;
        q.enqueueEvent(Events::EV_TIME, 0);    // param is not used here
-   }
-}
-
-
-// this function generates an EV_ANALOG event
-// whenever the analog channel AN_CHAN changes
-void analogManager() {
-   static int prevValue = 0;
-   int currValue;
-
-   currValue = analogRead(AN_CHAN);
-
-   if (abs(currValue - prevValue) >= AN_DELTA) {
-       prevValue = currValue;
-       q.enqueueEvent(Events::EV_ANALOG0, currValue);    // use param to pass analog value to event handler
    }
 }
 
@@ -172,12 +140,6 @@ void setup() {
   
    Serial.begin(9600);
    
-   // call timeHandler for TIME events
-   disp.addEventListener(Events::EV_TIME, timeHandler);
-   
-   // call analogHandler for ANALOG0 events
-   disp.addEventListener(Events::EV_ANALOG0, analogHandler);
-   
    // call kbHandler for _both_ KEY_PRESS and KEY_RELEASE events
    disp.addEventListener(Events::EV_KEY_PRESS, kbHandler);
    disp.addEventListener(Events::EV_KEY_RELEASE, kbHandler);
@@ -187,8 +149,6 @@ void setup() {
 // loop
 void loop() {
    // call the event generating functions
-   timeManager();
-   // analogManager();
    kbManager();
 
    // get events from the queue and call the
